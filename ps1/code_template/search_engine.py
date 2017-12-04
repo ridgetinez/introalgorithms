@@ -2,6 +2,8 @@ import os
 import math
 import re
 
+
+
 def extract_corpus(corpus_dir = "articles"):
 	"""
 	Returns a corpus of articles from the given directory.
@@ -10,7 +12,7 @@ def extract_corpus(corpus_dir = "articles"):
 		corpus_dir (str): The location of the corpus.
 
 	Returns:
-		dict: A dictionary with key = title of the article, 
+		dict: A dictionary with key = title of the article,
 			  value = list of words in the article
 	"""
 	corpus = {}
@@ -22,7 +24,7 @@ def extract_corpus(corpus_dir = "articles"):
 
 class SearchEngine(object):
 	"""
-	Represents an instance of a search engine. Instances of the search engine are 
+	Represents an instance of a search engine. Instances of the search engine are
 	initialized with a corpus.
 
 	Args:
@@ -31,6 +33,15 @@ class SearchEngine(object):
 	def __init__(self, corpus):
 		# The corpus of (article title, article text) pairs.
 		self.corpus = corpus
+                self.words = dict()
+                for title in corpus.keys():
+                    for word in corpus[title].split():
+                        try:
+                            self.words[word] == 1
+                        except:
+                            self.words[word] = 1
+
+
 
 	def get_relevant_articles_doc_dist(self, title, k):
 		"""
@@ -38,19 +49,28 @@ class SearchEngine(object):
 		k results. Uses the normal document distance score.
 
 		Args:
-			title (str): The title of the article being queried (assume it exists). 
+			title (str): The title of the article being queried (assume it exists).
 
 
 		Returns:
-			An array of the k most relevant (article title, document distance) pairs, ordered 
-			by decreasing relevance. 
+			An array of the k most relevant (article title, document distance) pairs, ordered
+			by decreasing relevance.
 
 			Specifications:
 				* Case is ignored entirely
 				* If two articles have the same distance, titles should be in alphabetical order
 		"""
-		# TODO: Implement this for part (a)
-		return []
+                vectors = dict()
+                for pageTitle in self.corpus.keys():
+                    vectors[pageTitle] = vectorise(pageTitle)
+
+                anglePairs = []
+                for otherTitle, _ in vectors.items():
+                    anglePairs.append((otherTitle, angleBetween(vectors[otherTitle], vector)))
+
+                sorted(anglePairs, key= lambda x: x[1])
+
+                return anglePairs[:k]
 
 	def get_relevant_articles_tf_idf(self, title, k):
 		"""
@@ -58,11 +78,11 @@ class SearchEngine(object):
 		k results. Uses the document distance with TF-IDF scores.
 
 		Args:
-			title (str): The title of the article being queried (assume it exists). 
+			title (str): The title of the article being queried (assume it exists).
 
 		Returns:
-			An array of the k most relevant (article title, document distance) pairs, ordered 
-			by decreasing relevance. 
+			An array of the k most relevant (article title, document distance) pairs, ordered
+			by decreasing relevance.
 
 			Specifications:
 				* Case is ignored entirely
@@ -80,17 +100,25 @@ class SearchEngine(object):
 			query (str): The query for the search engine. Doesn't contain any special characters.
 
 		Returns:
-			An array of the k best (article title, tf-idf score) pairs, ordered by decreasing score. 
+			An array of the k best (article title, tf-idf score) pairs, ordered by decreasing score.
 
-		    Specifications: 
-			    * Only consider articles with a positive tf-idf score. 
+		    Specifications:
+			    * Only consider articles with a positive tf-idf score.
 			    * If there are fewer than k results with a positive tf-idf score, return those results.
 				  If there are more, return only the k best results.
 			    * If two articles have the same score, titles should be in alphabetical order
 		"""
 		# TODO: Implement this for part (c)
 		return []
-		
+
+        @staticmethod
+        def vectorise(self, title):
+                return []
+
+        @staticmethod
+        def tf(self, title):
+                # for eve
+
 if __name__ == '__main__':
 	corpus = extract_corpus()
 	e = SearchEngine(corpus)
