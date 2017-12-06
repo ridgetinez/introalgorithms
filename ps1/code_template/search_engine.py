@@ -33,15 +33,6 @@ class SearchEngine(object):
 	def __init__(self, corpus):
 		# The corpus of (article title, article text) pairs.
 		self.corpus = corpus
-                self.words = dict()
-                for title in corpus.keys():
-                    for word in corpus[title].split():
-                        try:
-                            self.words[word] == 1
-                        except:
-                            self.words[word] = 1
-
-
 
 	def get_relevant_articles_doc_dist(self, title, k):
 		"""
@@ -60,17 +51,29 @@ class SearchEngine(object):
 				* Case is ignored entirely
 				* If two articles have the same distance, titles should be in alphabetical order
 		"""
-                vectors = dict()
-                for pageTitle in self.corpus.keys():
-                    vectors[pageTitle] = vectorise(pageTitle)
+                pageAngles = []
+                target = self.vectorise(title)
+                for page in self.corpus.keys():
+                    pageVector = self.vectorise(page)
+                    pageAngles.append((page, self.angle(target, pageVector)))
 
-                anglePairs = []
-                for otherTitle, _ in vectors.items():
-                    anglePairs.append((otherTitle, angleBetween(vectors[otherTitle], vector)))
+                pageAngles.sort(key=lambda titleAnglePair: titleAnglePair[1])
+                return pageAngles[1:k+1]
 
-                sorted(anglePairs, key= lambda x: x[1])
+        def vectorise(self, title):
+                """
+                Returns a tf vector of the page given by title.
 
-                return anglePairs[:k]
+                Args:
+                        title (str): The title of the article being queried (assume it exists).
+
+
+                Returns:
+                        A dictionary of term frequency (term, frequency) pairs in the article.
+
+                        Specifications:
+                                * Case is ignored entirely
+                """
 
 	def get_relevant_articles_tf_idf(self, title, k):
 		"""
@@ -111,13 +114,6 @@ class SearchEngine(object):
 		# TODO: Implement this for part (c)
 		return []
 
-        @staticmethod
-        def vectorise(self, title):
-                return []
-
-        @staticmethod
-        def tf(self, title):
-                # for eve
 
 if __name__ == '__main__':
 	corpus = extract_corpus()
